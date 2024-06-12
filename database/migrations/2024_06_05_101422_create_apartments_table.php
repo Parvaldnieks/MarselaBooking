@@ -16,14 +16,12 @@ return new class extends Migration
             $table->string("availability");
             $table->integer("rating");
             $table->integer("price");
+            $table->text('image')->nullable(); // Change column type to text
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('apartments');
     }

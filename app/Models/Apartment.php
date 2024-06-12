@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Apartment extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'availability', 'rating', 'price', 'image_urls',
+    ];
 
-    protected $fillable = ['availability', 'rating', 'price'];
+    protected $casts = [
+        'image_urls' => 'array', // Ensure image_urls is cast to array
+    ];
 }

@@ -9,13 +9,14 @@ class RegularUserMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        \Log::info('RegularUserMiddleware executed');
-        
-        if (!auth()->check() || !auth()->user()->is_admin) {
-            \Log::info('User is not an admin');
-            return redirect()->route('home');
+        // Logic to check if the user is a regular user
+        if (!auth()->check() || auth()->user()->is_admin) {
+            // If the user is not logged in or is an admin, proceed with the request
+            return $next($request);
         }
 
+        // For regular users, you might want to handle access restrictions differently
+        // For now, let's just return without redirection
         return $next($request);
     }
 }

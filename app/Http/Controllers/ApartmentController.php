@@ -13,6 +13,11 @@ class ApartmentController extends Controller
         return view('apartments.index', compact('apartments'));
     }
 
+    public function show(Apartment $apartment)
+    {
+        return view('apartments.show', compact('apartment'));
+    }
+
     public function create()
     {
         return view('apartments.create');
@@ -20,18 +25,30 @@ class ApartmentController extends Controller
 
     public function store(Request $request)
     {
-    $request->validate([
-        'availability' => 'required|string',
-        'rating' => 'nullable|integer|between:0,5',
-        'price' => 'required|integer',
-    ]);
+        $request->validate([
+            'availability' => 'required|string',
+            'rating' => 'nullable|integer|between:0,5',
+            'price' => 'required|integer',
+            'image_urls.*' => 'required|url', // Validate each image URL
+        ]);
 
-    try {
-        Apartment::create($request->all());
-        return redirect()->route('apartments.index')->with('success', 'Apartment created successfully.');
-    } catch (\Exception $e) {
-        return redirect()->back()->withErrors(['error' => 'Failed to create apartment.'])->withInput();
-    }
+        try {
+            // Create the apartment
+            $apartment = Apartment::create([
+                'availability' => $request->availability,
+                'rating' => $request->rating,
+                'price' => $request->price,
+            ]);
+
+            // Store image URLs
+            foreach ($request->image_urls as $imageUrl) {
+                $apartment->images()->create(['image_path' => $imageUrl]);
+            }
+
+            return redirect()->route('apartments.index')->with('success', 'Apartment created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Failed to create apartment.'])->withInput();
+        }
     }
 
     public function edit(Apartment $apartment)
@@ -45,10 +62,25 @@ class ApartmentController extends Controller
             'availability' => 'required|string',
             'rating' => 'nullable|integer|between:0,5',
             'price' => 'required|integer',
+            'image_urls.*' => 'nullable|url', // Validate each image URL
         ]);
 
         try {
-            $apartment->update($request->all());
+            // Update the apartment attributes
+            $apartment->update([
+                'availability' => $request->availability,
+                'rating' => $request->rating,
+                'price' => $request->price,
+            ]);
+
+            // If new image URLs are provided, update them
+            if ($request->has('image_urls')) {
+                $apartment->images()->delete(); // Delete existing images
+                foreach ($request->image_urls as $imageUrl) {
+                    $apartment->images()->create(['image_path' => $imageUrl]);
+                }
+            }
+
             return redirect()->route('apartments.index')->with('success', 'Apartment updated successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Failed to update apartment.'])->withInput();

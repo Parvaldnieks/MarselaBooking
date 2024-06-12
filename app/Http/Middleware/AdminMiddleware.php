@@ -9,8 +9,6 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        \Log::info('AdminMiddleware executed');
-        
         if (auth()->check() && auth()->user()->is_admin) {
             return $next($request);
         }
