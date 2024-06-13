@@ -10,7 +10,7 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'is_admin',
+        'name', 'email', 'password', 'is_admin', 'surname', 'phone',
     ];
 
     protected $hidden = [
@@ -21,4 +21,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'is_admin' => 'boolean',
     ];
+
+    public function reservations()
+    {
+        return $this->hasMany(Booking::class, 'human_id');
+    }
+
+    public function human()
+    {
+        return $this->hasOne(Human::class);
+    }
 }

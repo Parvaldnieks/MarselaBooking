@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('humans', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->string("surname");
-            $table->integer("number");
-            $table->timestamps();
+            $table->string('name');
+            $table->string('surname')->nullable();
+            $table->string('email')->unique();
+            $table->string('phone')->nullable(); // Consider changing to string depending on phone number needs
+            $table->timestamps(); // Creates 'created_at' and 'updated_at' columns
         });
     }
 

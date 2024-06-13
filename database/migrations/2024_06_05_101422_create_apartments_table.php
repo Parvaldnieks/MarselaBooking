@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('apartments', function (Blueprint $table) {
             $table->id();
-            $table->string("availability");
-            $table->integer("rating");
-            $table->integer("price");
-            $table->text('image')->nullable(); // Change column type to text
+            $table->string('availability');
+            $table->integer('rating')->nullable();
+            $table->integer('price');
+            $table->json('images')->nullable(); // Use json type to store image URLs as JSON array
             $table->timestamps();
-        });
+        });               
     }
 
     public function down()
